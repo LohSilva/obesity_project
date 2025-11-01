@@ -1,0 +1,22 @@
+#Bibliotecas base de análise e machine learning
+pandas
+numpy
+scikit-learn
+matplotlib
+seaborn
+
+#Dashboard e visualização
+streamlit
+shap
+
+#Utilitários e boas práticas
+python-dotenv
+pyyaml
+joblib
+
+#Boas práticas de código
+black
+pytest
+
+#Opcional (para integração futura com Drive)
+pydrive2

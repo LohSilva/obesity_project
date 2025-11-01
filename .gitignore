@@ -1,0 +1,21 @@
+#Ambiente virtual
+.venv/
+env/
+__pycache__/
+
+#Arquivos temporários e logs
+*.pyc
+*.log
+.DS_Store
+
+#Arquivos de dados e modelos
+data/raw/*
+data/interim/*
+data/processed/*
+models/*.pkl
+
+#Arquivos de ambiente
+.env
+
+#Streamlit cache
+.streamlit/
