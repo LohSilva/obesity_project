@@ -66,7 +66,7 @@ O modelo de aprendizado de máquina será escolhido com base em testes comparati
 
 A justificativa técnica detalha todas as etapas do pipeline, incluindo arquitetura de dados, modelagem, métricas e storytelling analítico.
 
-📄 **Acesse aqui:** [Justificativa Técnica (PDF)](docs/justificativa_tecnica.pdf)
+📄 **Acesse aqui:** [Justificativa Técnica (PDF)](docs/justificativa_tecnica/justificativa_tecnica.pdf)
 
 ## 🧾 7. Conclusão
 
