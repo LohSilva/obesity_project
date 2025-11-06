@@ -79,7 +79,7 @@ Este projeto consolida o aprendizado prático em Data Analytics e Machine Learni
 |------|----------|
 | **Lo-Ruama Silva** | [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/lo-ruama-silva/)|
 | **Ruan Lucas** | [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/ruanlucas12) |
-| **Lucas Dantas** | [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](#) |
+| **Lucas Dantas** | [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/lucas-ninomiya-dantas-78428820a) |
 | **Guilherme Silva** | [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](#) |
 
 
