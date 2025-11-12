@@ -11,7 +11,13 @@ __pycache__/
 #Arquivos de dados e modelos
 data/raw/*
 data/interim/*
+
+#Ignora tudo em processed...
 data/processed/*
+#... EXCETO o CSV da camada Gold para o deploy
+!data/processed/obesity_gold.csv
+
+#Ignora todos os modelos...
 models/*.pkl
 
 #Arquivos de ambiente

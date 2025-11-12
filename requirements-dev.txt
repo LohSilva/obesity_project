@@ -1,0 +1,10 @@
+-r requirements.txt
+
+# Dependências de desenvolvimento
+black             # Formatador de código
+pytest            # Para testes
+python-dotenv     # Para carregar seu .env local
+pyyaml            # Para arquivos de configuração
+psycopg2-binary   # Essencial para seu notebook conectar ao PostgreSQL
+jupyterlab        # Para rodar seus notebooks .ipynb
+pydrive2          # Para integração com Drive (futuro)
