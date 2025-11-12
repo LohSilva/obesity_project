@@ -36,8 +36,12 @@ def run():
     st.title("Visão Analítica - Nível Obesidade")
 
     st.markdown(
-        "Esta análise mergulha nos dados de 2.111 indivíduos para entender os fatores da obesidade. A primeira vista, os dados mostram um perfil jovem (média de 24 anos) e com IMC médio na faixa normal (29.7). No entanto, uma baixa taxa de hábitos saudáveis (59.1%) sugere que o risco está mais ligado ao comportamento do que ao perfil demográfico."
-    )
+    "Esta análise mergulha nos dados de 2.111 indivíduos para entender os fatores da obesidade. "
+    "Os dados mostram um perfil jovem (média de 24 anos), mas com um **IMC médio preocupante de 29.7**, "
+    "valor que já se encontra no **limite superior da faixa de Sobrepeso**, beirando a Obesidade Grau I. \n\n"
+    "Isso, combinado com uma baixa taxa de hábitos saudáveis (59.1%), sugere que o risco na amostra "
+    "é alto e está fortemente ligado ao comportamento."
+)
 
     #Méttricas gerais em cards
     st.markdown("## Resumo Estatístico")
@@ -107,8 +111,14 @@ def run():
      label="Taxa de hábitos saudáveis", 
      value=f"{df_gold['comportamento_saudavel'].mean()*100:.1f}%"
     )
-    st.info("**Interpretação:** A base apresenta indivíduos predominantemente jovens e adultos, com IMC médio dentro da faixa de peso normal, " \
-    "mas uma taxa de hábitos saudáveis moderada, sugerindo oportunidades de melhoria comportamental.")
+    st.info(
+    "**Interpretação:** A base apresenta indivíduos predominantemente jovens (média de 24.3 anos), "
+    "mas com um **IMC médio de 29.7**, já classificado como **Sobrepeso** e muito próximo da "
+    "faixa de Obesidade. \n\n"
+    "Isso indica que a amostra **não representa a população geral**, mas sim um grupo que "
+    "já apresenta um risco elevado, o que reforça a importância de entender os fatores "
+    "comportamentais (taxa de hábitos saudáveis em 59.1%)."
+)
     
     st.markdown("---") 
     # --- 1. DISTRIBUIÇÃO DE GÊNERO ---
@@ -199,7 +209,7 @@ def run():
     # --- 3. NÍVEL DE OBESIDADE POR GÊNERO ---
     st.markdown("---") 
     st.header("Nível de Obesidade por Gênero")
-    st.markdown("Compara-se a distribuição dos níveis de obesidade entre homens e mulheres.")
+    st.markdown("Comparação da distribuição dos níveis de obesidade entre homens e mulheres.")
 
     #1. Criar o Gráfico Agrupado
     fig_obesidade_genero = px.histogram(
@@ -271,10 +281,10 @@ def run():
 
     #4. Adicionar o Insight
     st.warning(
-        "**Interpretação:** O gráfico acima deve confirmar que os critérios de "
+        "**Interpretação:** O gráfico acima confirma que os critérios de "
         "IMC para 'Obesidade Tipo II' e 'Tipo III' são diferentes para homens e mulheres. "
         "\n\n"
-        "Observe se a faixa de IMC (a 'caixa') para 'Obesidade Tipo II' em homens "
+        "Observa-se a faixa de IMC (a 'caixa') para 'Obesidade Tipo II' em homens "
         "é diferente da faixa para mulheres. O mesmo vale para 'Obesidade Tipo III'. "
         "Isso confirma o 'vazamento de dados' no dataset original."
     )
@@ -284,7 +294,7 @@ def run():
     st.markdown(
         "A tabela abaixo resume as faixas de IMC (mínimo, médio, máximo) "
         "para cada classe de peso original, separada por gênero. "
-        "Note como as faixas de 'Obesidade Tipo II' e 'Tipo III' "
+        "Nota-se como as faixas de 'Obesidade Tipo II' e 'Tipo III' "
         "não se sobrepõem entre os gêneros."
     )
 
@@ -300,7 +310,6 @@ def run():
     #st.table(tabela_prova)
     
     st.markdown("---")
-
     
     # --- INÍCIO DA ANÁLISE CORRIGIDA ---
     st.header("Análise Corrigida: Usando o Padrão OMS")
@@ -315,7 +324,7 @@ def run():
     #Gráfico 1: A Nova Distribuição (OMS)
     st.subheader("Distribuição da Nova Variável-Alvo (OMS)")
     st.markdown("Este gráfico mostra a distribuição de dados usando a classificação OMS. "
-                "Note como ela é mais orgânica, com a maioria dos indivíduos "
+                "Verificamos como ela é mais orgânica, com a maioria dos indivíduos "
                 "na categoria 'Sobrepeso', ao contrário da distribuição artificial original.")
 
     #1. Criar o gráfico
@@ -392,8 +401,8 @@ def run():
     #4. Exibir o gráfico
     st.plotly_chart(fig_genero_oms, use_container_width=True)
 
-    st.success( 
-        "**Conclusão da Investigação:** Sucesso. O viés desapareceu. \n\n"
+    st.success(
+        "**Conclusão da Investigação:** Validação concluída. A aplicação da variável-alvo `classe_peso_oms` **corrigiu o viés** de gênero. \n\n"
         "Ao contrário do gráfico original, aqui vemos que homens e mulheres estão "
         "**distribuídos em *todas* as categorias** de obesidade. A separação artificial "
         "de 'Tipo II' (só homens) e 'Tipo III' (só mulheres) não existe mais. \n\n"
