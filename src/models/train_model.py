@@ -62,7 +62,11 @@ features_de_leakage = [
     'classe_peso_corporal', #Alvo original falho
     'IMC',                  #Vazamento direto
     'peso_kg',              #Vazamento direto
-    'altura_m'              #Vazamento direto
+    'altura_m',              #Vazamento direto
+    'risco_alimentos_caloricos_num',
+    'risco_lanches_num',
+    'risco_alcool_num',
+    'comportamento_saudavel'
 ]
 
 #X são as features

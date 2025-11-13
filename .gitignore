@@ -20,6 +20,9 @@ data/processed/*
 #Ignora todos os modelos...
 models/*.pkl
 
+#... EXCETO o CSV da camada Gold para o deploy
+!models/randm_forest_pipeline.jolib
+
 #Arquivos de ambiente
 .env
 
