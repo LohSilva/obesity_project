@@ -1,77 +1,86 @@
-# 🏥 Projeto de Previsão de Nível de Obesidade
+## 🏥**Projeto de Previsão de Nível de Obesidade**
 
-![Python](https://img.shields.io/badge/Python-3.11+-blue?style=for-the-badge&logo=python)
-![Streamlit](https://img.shields.io/badge/Streamlit-App-red?style=for-the-badge&logo=streamlit)
-![Status](https://img.shields.io/badge/Status-Em%20Desenvolvimento-yellow?style=for-the-badge)
+Este projeto desenvolve um pipeline completo de Data Analytics e Machine Learning para prever o nível de obesidade de um indivíduo com base em hábitos alimentares, físicos e dados demográficos. A solução final é um dashboard interativo em Streamlit projetado para auxiliar equipes médicas na rápida identificação de perfis de risco.
 
-Este projeto desenvolve um pipeline completo de *Data Analytics* e *Machine Learning* para prever o nível de obesidade de um indivíduo com base em hábitos alimentares, físicos e dados demográficos. A solução final é um **dashboard interativo em Streamlit** projetado para auxiliar equipes médicas na rápida identificação de perfis de risco.
+### 🌟**Destaque do Projeto: A Investigação do "Data Leakage"**
 
----
+Mais do que apenas treinar um modelo, o núcleo deste projeto foi uma investigação analítica que descobriu uma falha crítica no dataset original.
 
-## 🎯 1. O Desafio (Contexto de Negócio)
+Nossa análise provou que esses resultados eram falsamente inflados devido a um vazamento de dados (data leakage), onde a variável-alvo original (classe_peso_corporal) era criada usando regras de IMC diferentes para cada gênero.
 
-O objetivo deste projeto, parte do Tech Challenge da Pós-Graduação em Data Analytics, era atuar como Cientista de Dados em um hospital. O desafio era claro: desenvolver um modelo de *Machine Learning* capaz de auxiliar a equipe médica a diagnosticar a obesidade, uma condição de saúde global crescente e multifatorial.
+Este projeto documenta a descoberta, a prova e a correção dessa falha, culminando em um modelo robusto, com acurácia honesta de **78.25%**, treinado em um alvo cientificamente válido (classe_peso_oms) e pronto para uso clínico.
 
-A solução deveria ir além de um modelo: era preciso entregar uma **aplicação preditiva (Streamlit)** e uma **visão analítica** com *insights* acionáveis para a equipe médica.
+## 🚀**1. Acesse a Aplicação (Deploy)**
 
-## 💡 2. A Solução: Dashboard Interativo
+A aplicação interativa está hospedada no Streamlit Community Cloud e pode ser acessada publicamente.
 
-Para atender a esse desafio, foi construído um sistema preditivo completo:
+Link: https://projeto-obesidade.streamlit.app//
 
-* **Pipeline de Dados Robusto:** Utilizando a Arquitetura Medalhão (Bronze, Silver, Gold) para garantir a qualidade, governança e reprodutibilidade dos dados, desde a ingestão crua até a camada analítica.
-* **Modelo Preditivo:** Após testes com algoritmos como *Random Forest* e *XGBoost* foi selecionado um modelo com **acurácia superior a 75%**, focado em métricas de precisão e *recall*.
-* **Dashboard de Insights (Streamlit):** Uma interface interativa onde a equipe médica pode:
-    * Realizar previsões individuais em tempo real.
-    * Visualizar métricas de desempenho do modelo (Matriz de Confusão).
-    * **Entender o "Porquê":** Gráficos de interpretabilidade (SHAP) explicam quais fatores (ex: "consumo de fast food", "atividade física") mais influenciam o risco de obesidade para um paciente.
+O dashboard é dividido em duas seções:
 
-## 🚀 3. Como Executar Localmente (VS Code)
+- **Visão Analítica:** O storytelling completo que documenta a investigação do data leakage e a análise dos fatores de risco.
 
-1.  **Criar ambiente virtual e instalar dependências:**
-    ```bash
-    python -m venv .venv
-    source .venv/bin/activate  # ou 
-    .\.venv\Scripts\activate no Windows
-    pip install -r requirements.txt
-    ```
-2.  **Executar o Pipeline de Dados:**
-    * (Opcional, se os dados processados não estiverem no Git)
-    ```bash
-    python src/data/preprocess.py
+- **Sistema Preditivo:** A ferramenta interativa para o médico inserir dados do paciente e receber a previsão de risco.
+
+## 💡 **2. A Solução: Duas Ferramentas em Uma**
+
+Para atender ao desafio, foram construídas duas soluções integradas:
+
+**Visão Analítica (O "Porquê"):** Um storytelling de dados que prova a falha no dataset original (o leakage) e valida a criação de uma nova variável-alvo (classe_peso_oms) baseada nos padrões da OMS.
+
+**Sistema Preditivo (O "O Quê"):**
+
+- Ferramenta (Aba 1): Uma interface limpa para o médico inserir os dados do paciente e receber uma previsão.
+
+- Interpretação (Aba 2): Uma "tradução para o médico" da performance do modelo, usando a Matriz de Confusão e gráficos SHAP para provar que o modelo é confiável e "pensa" de forma clínica.
+
+## 🛠️**3. Arquitetura e Metodologia**
+
+O projeto segue padrões profissionais de Engenharia de Dados para garantir qualidade e reprodutibilidade.
+
+**Arquitetura Medalhão:** Os dados foram processados seguindo as camadas Bronze (ingestão), Silver (limpeza e engenharia de features) e Gold (camada final, pronta para modelagem).
+
+**Engenharia de Features:** O insight mais importante foi obtido através da criação de features de engenharia, como indice_estilo_vida e indice_risco_alimentar, que se provaram preditores mais fortes do que os dados brutos.
+
+**Pipeline de Modelagem (src/models/):** O treinamento foi feito de forma robusta, usando Pipelines do Scikit-learn para pré-processamento, LabelEncoder para o alvo, e Validação Cruzada (K-Fold) para comparar Random Forest e XGBoost.
+
+**Interpretabilidade (XAI):** O modelo final foi validado com SHAP para garantir que suas decisões são baseadas em fatores clinicamente relevantes.
+
+## 📘**4. Documentação Completa**
+
+Toda a jornada, desde a arquitetura de dados, a prova do data leakage e a análise de performance do modelo (Acurácia, F1-Score, Matriz de Confusão e SHAP) estão documentados no relatório técnico.
+
+📄**Acesse aqui:** [Justificativa Técnica (PDF)](docs/relatorio_tecnico/relatorio_tecnico.pdf)
+
+## 🚀**5. Como Executar o Dashboard Localmente**
+
+Este repositório está configurado para o deploy (lendo o CSV e o modelo .joblib). Não é necessário rodar os scripts de treinamento para executar o app.
+
+1. Clone o repositório:
+git clone [https://github.com/seu-usuario/obesity_project.git](https://github.com/seu-usuario/obesity_project.git)
+cd obesity_project
+
+2. Crie o ambiente virtual e instale as dependências:
+
+python -m venv .venv
+.\.venv\Scripts\activate 
+pip install -r requirements.txt
+
+3. Inicie o Dashboard Streamlit:
+
+streamlit run src/app/app.py
+
+### Como Recriar o Modelo (Avançado)
+
+Se você deseja rodar o pipeline de treinamento do zero:
+
+- Treinar o Modelo:
+
     python src/models/train_model.py
-    ```
-3.  **Iniciar o Dashboard Streamlit:**
-    ```bash
-    streamlit run src/app/streamlit_app.py
-    ```
 
-## 🛠️ 4. Estrutura do Projeto e Boas Práticas
+- Gerar os Gráficos SHAP:
 
-Este projeto foi construído seguindo padrões profissionais de Engenharia de Dados e MLOps para garantir excelência e reprodutibilidade.
-
-* **Arquitetura Medalhão:** Separação clara dos dados em camadas `data/raw` (Bronze), `data/interim` (Silver) e `data/processed` (Gold).
-* **Código Modular:** O código-fonte reside em `src/`, com responsabilidades separadas para processamento de dados (`src/data`), engenharia de features (`src/features`), modelagem (`src/models`) e a aplicação (`src/app`).
-* **Gestão de Dependências:** O arquivo `requirements.txt` garante um ambiente de execução consistente.
-* **Versionamento (Git):** Uso de `.gitignore` para proteger dados sensíveis e artefatos de modelo, mantendo o repositório limpo.
-
-## 🧩 5. Metodologia e Estratégia Analítica
-
-A solução foi desenvolvida com base em boas práticas de engenharia e ciência de dados, seguindo a Arquitetura Medalhão (Bronze, Silver e Gold).
-Essa abordagem garante organização, escalabilidade e rastreabilidade em todas as etapas do ciclo de vida dos dados — desde a coleta até a modelagem e visualização.
-
-O pipeline segue a filosofia ELT (Extract, Load, Transform), permitindo maior flexibilidade na limpeza e transformação dos dados.
-O modelo de aprendizado de máquina será escolhido com base em testes comparativos, priorizando desempenho e interpretabilidade.
-
-## 📘 6. Documentação Completa
-
-A justificativa técnica detalha todas as etapas do pipeline, incluindo arquitetura de dados, modelagem, métricas e storytelling analítico.
-
-📄 **Acesse aqui:** [Justificativa Técnica (PDF)](docs/justificativa_tecnica/justificativa_tecnica.pdf)
-
-## 🧾 7. Conclusão
-
-Este projeto consolida o aprendizado prático em Data Analytics e Machine Learning, implementando um pipeline completo e reproduzível — da ingestão à comunicação visual — com aplicabilidade direta em contextos de saúde pública e bem-estar.
-
+python src/models/generate_shap.py
 
 ## 👩‍💻 Equipe de Desenvolvimento
 
@@ -81,6 +90,5 @@ Este projeto consolida o aprendizado prático em Data Analytics e Machine Learni
 | **Ruan Lucas** | [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/ruanlucas12) |
 | **Lucas Dantas** | [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/lucas-ninomiya-dantas-78428820a) |
 | **Guilherme Silva** | [![LinkedIn](https://img.shields.io/badge/LinkedIn-0077B5?style=for-the-badge&logo=linkedin&logoColor=white)](#) |
-
 
 💬 Desenvolvido como parte do Tech Challenge da Pós-Tech em Data Analytics – FIAP.
