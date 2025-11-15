@@ -50,20 +50,24 @@ O projeto segue padrões profissionais de Engenharia de Dados para garantir qual
 
 Toda a jornada, desde a arquitetura de dados, a prova do data leakage e a análise de performance do modelo (Acurácia, F1-Score, Matriz de Confusão e SHAP) estão documentados no relatório técnico.
 
-📄**Acesse aqui:** [Justificativa Técnica (PDF)](docs/relatorio_tecnico/relatorio_tecnico.pdf)
+📄**Acesse aqui:** [Relatório Técnico (PDF)](docs/relatorio_tecnico/relatorio_tecnico.pdf)
 
 ## 🚀**5. Como Executar o Dashboard Localmente**
 
 Este repositório está configurado para o deploy (lendo o CSV e o modelo .joblib). Não é necessário rodar os scripts de treinamento para executar o app.
 
 1. Clone o repositório:
+
 git clone [https://github.com/seu-usuario/obesity_project.git](https://github.com/seu-usuario/obesity_project.git)
+
 cd obesity_project
 
 2. Crie o ambiente virtual e instale as dependências:
 
 python -m venv .venv
+
 .\.venv\Scripts\activate 
+
 pip install -r requirements.txt
 
 3. Inicie o Dashboard Streamlit:
