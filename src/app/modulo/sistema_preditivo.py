@@ -227,10 +227,7 @@ def run():
         st.markdown("---")
         submit_button = st.form_submit_button(label='Analisar Risco', type="primary")
 
-    # -------- CÁLCULO DO IMC SÓ APÓS O CLIQUE --------
-    if submit_button:
-
-        # Calcular IMC
+        #Calcular IMC apenas para exibição
         imc = inputs['peso'] / (inputs['altura'] ** 2)
 
         def classificar_imc(imc):
@@ -249,6 +246,8 @@ def run():
                 
         classificacao_oms = classificar_imc(imc)
 
+    # -------- LÓGICA DE PREVISÃO --------
+    if submit_button:  
         with st.spinner("Analisando perfil e executando modelo..."):
             df_predicao = preparar_dados_para_previsao(inputs)
             previsao_numerica = modelo_pipeline.predict(df_predicao)
@@ -262,31 +261,50 @@ def run():
         st.write(f"**IMC calculado:** {imc:.1f}")
         st.write(f"**Classificação OMS:** {classificacao_oms}")
 
+        #Mensagem automática se IMC >= 25
+        if imc >= 25:
+            st.warning(
+                "⚠ **Observação Importante:**\n"
+                "O IMC indica um quadro atual que merece atenção. "
+                "O resultado preditivo abaixo avalia apenas o *risco futuro baseado em hábitos*, "
+                "e não substitui avaliação clínica."
+            )
+
         # ----- RESULTADO -----
         resultado = previsao_texto[0]
 
-        st.subheader("Resultado da Análise:")
+        st.subheader("Análise de Risco:")
 
         if resultado in ['Obesidade Grau I', 'Obesidade Grau II', 'Obesidade Grau III']:
-            st.error("⚠ Risco Elevado")
+            nivel_risco = "Alto"
+            st.error("🔴 **Risco Comportamental Alto**")
             st.markdown(
-                "**Recomendação:** O conjunto de hábitos informados indica um alto risco "
-                "de evolução ou manutenção de quadros relacionados à obesidade. "
-                "É recomendada uma avaliação clínica profissional e ações imediatas."
+                "Os hábitos informados sugerem alta probabilidade de manutenção ou evolução "
+                "de quadros relacionados à obesidade. Recomendam-se intervenções imediatas "
+                "e acompanhamento profissional."
             )
 
         elif resultado == 'Sobrepeso':
-            st.warning("⚠ Risco Moderado")
+            nivel_risco = "Moderado"
+            st.warning("🟠 **Risco Comportamental Moderado**")
             st.markdown(
-                "**Recomendação:** Os hábitos informados sugerem que o paciente está em "
-                "uma zona de atenção. Pequenas mudanças de estilo de vida podem reduzir "
-                "significativamente o risco de progressão."
+                "Os hábitos informados colocam o paciente em uma **zona de atenção**. "
+                "Mudanças graduais no estilo de vida podem reduzir o risco de evolução do quadro."
             )
 
         else:
-            st.info("ℹ Risco Baixo")
+            nivel_risco = "Baixo"
+            st.info("🟢 **Risco Comportamental Baixo**")
             st.markdown(
-                "**Recomendação:** O modelo indica baixo risco com base nos hábitos "
-                "informados, mas reforça-se a importância de manter rotinas saudáveis "
-                "para prevenção futura."
+                "Os hábitos informados indicam um **baixo risco comportamental** para evolução "
+                "de quadros associados à obesidade. Ainda assim, recomenda-se manter rotinas "
+                "saudáveis e acompanhamento periódico."
             )
+
+
+        #Rodapé
+        st.markdown("---")
+        st.caption(
+            "⚕ *Importante:* Este modelo avalia **hábitos e comportamento**, "
+            "não substitui diagnóstico clínico baseado em peso e altura."
+        )
