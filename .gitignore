@@ -18,10 +18,11 @@ data/processed/*
 !data/processed/obesity_gold.csv
 
 #Ignora todos os modelos...
-models/*.pkl
+models/*.joblib
 
 #... EXCETO o CSV da camada Gold para o deploy
-!models/randm_forest_pipeline.jolib
+!models/random_forest_pipeline.joblib
+!models/xgboost_pipeline.joblib
 
 #Arquivos de ambiente
 .env

@@ -34,7 +34,7 @@ TARGET = 'classe_peso_oms'
 y_encoded = label_encoder.transform(df[TARGET])
 
 features_de_leakage_e_intermediarias = [
-    'classe_peso_corporal', 'IMC', 'peso_kg', 'altura_m',
+    'classe_peso_corporal',
     'risco_alimentos_caloricos_num', 'risco_lanches_num', 
     'risco_alcool_num', 'comportamento_saudavel'
 ]
@@ -76,25 +76,26 @@ except Exception as e:
 
 # --- 5. CALCULAR OS VALORES SHAP ---
 #Agora calculamos as "explicações" para o conjunto de *teste*
-print("--- [5/6] Criando o explicador SHAP (TreeExplainer)... ---")
-explainer = shap.TreeExplainer(model)
+# --- 5. CALCULAR OS VALORES SHAP --- #Agora calculamos as "explicações" para o conjunto de *teste* 
+print("--- [5/6] Criando o explicador SHAP (TreeExplainer)... ---") 
+explainer = shap.TreeExplainer(model) 
 
-# --- 6. CALCULAR OS VALORES SHAP ---
-#Calculamos os valores SHAP nos dados de teste PRÉ-PROCESSADOS
-print("--- [6/6] Calculando valores SHAP (Isso pode ser demorado)... ---")
+# --- 6. CALCULAR OS VALORES SHAP --- 
+#Calculamos os valores SHAP nos dados de teste PRÉ-PROCESSADOS 
+print("--- [6/6] Calculando valores SHAP (Isso pode ser demorado)... ---") 
 shap_values = explainer.shap_values(X_test_processed_df)
 
 # --- 7. GERAR E SALVAR O GRÁFICO DE BARRAS ---
 print(f"--- [7/7] Salvando gráfico de barras SHAP em {SHAP_BAR_PATH}... ---")
 
-plt.figure()
-shap.summary_plot(
+plt.figure() 
+shap.summary_plot( 
     shap_values, 
-    X_test_processed_df, 
+    X_test_processed_df,
     plot_type="bar", 
-    class_names=label_encoder.classes_,
-    show=False
-)
+    class_names=label_encoder.classes_, 
+    show=False )
+
 plt.title("Importância Global das Features (Impacto Médio no Modelo)")
 plt.xlabel("Contribuição Média (Valor SHAP)")
 

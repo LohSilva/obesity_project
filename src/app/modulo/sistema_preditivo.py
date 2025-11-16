@@ -5,7 +5,7 @@ import os
 import time #Para um efeito de "loading"
 
 # --- 1. SETUP: CARREGAMENTO DOS MODELOS E CAMINHOS ---
-#Usando a mesma lógica de caminho robusto 
+
 project_root = os.path.abspath(os.path.join(os.path.dirname(__file__), "../../.."))
 MODELS_DIR = os.path.join(project_root, "models")
 REPORTS_DIR = os.path.join(project_root, "reports", "figures")
@@ -14,10 +14,6 @@ REPORTS_DIR = os.path.join(project_root, "reports", "figures")
 MODEL_PATH = os.path.join(MODELS_DIR, "random_forest_pipeline.joblib")
 LABEL_ENCODER_PATH = os.path.join(MODELS_DIR, "label_encoder.joblib")
 
-#Imagens de Validação
-CM_PATH = os.path.join(REPORTS_DIR, "matriz_confusao_final.png")
-REPORT_PATH = os.path.join(REPORTS_DIR, "classification_report_final.png")
-SHAP_PATH = os.path.join(REPORTS_DIR, "shap_summary_bar.png")
 
 
 # --- Cache de Recursos ---
@@ -146,227 +142,151 @@ def preparar_dados_para_previsao(inputs_humanos):
 def run():
     
     if not modelo_pipeline or not label_encoder:
-        #Se os modelos não carregaram, pare aqui.
         st.stop()
         
     st.title("Sistema Preditivo de Nível de Obesidade")
 
-    # --- CRIA AS ABAS ---
-    tab1, tab2 = st.tabs(
-        ["Simulador de Risco", "Interpretação do Resultado"]
+    st.header("Ferramenta de Apoio à Decisão")
+    st.markdown(
+        "Insira os dados do paciente para estimar o nível de risco de obesidade "
+        "com base nos hábitos informados."
     )
 
-    # --- CONTEÚDO DA ABA 1: A FERRAMENTA ---
-    with tab1:
-        st.header("Ferramenta de Apoio à Decisão")
-        st.markdown(
-            "Insira os dados do paciente para estimar o nível de risco de obesidade "
-            "com base no padrão da OMS."
+    with st.form(key="prediction_form"):
+        inputs = {}
+
+        # --- Novo grupo: Dados Antropométricos ---
+        st.subheader("Dados Antropométricos")
+
+        col_peso, col_altura = st.columns(2)
+        with col_peso:
+            inputs['peso'] = st.number_input("Peso (kg)", min_value=30.0, max_value=300.0, value=70.0)
+
+        with col_altura:
+            inputs['altura'] = st.number_input("Altura (m)", min_value=1.20, max_value=2.20, value=1.70)
+            
+        # --- Grupo 1: Perfil do Paciente ---
+        st.subheader("Perfil do Paciente")
+        col1, col2 = st.columns(2)
+        with col1:
+            inputs['idade'] = st.number_input("Idade (anos)", min_value=14, max_value=100, value=25)
+        with col2:
+            inputs['genero'] = st.radio("Gênero do Paciente", ['Feminino', 'Masculino'], horizontal=True)
+
+        # --- Grupo 2: Histórico Familiar ---
+        st.subheader("Histórico Familiar")
+        inputs['historico_familiar'] = st.radio("Histórico familiar de obesidade?", ['Não', 'Sim'], horizontal=True)
+
+        # --- Grupo 3: Modo de Locomoção ---
+        st.subheader("Modo de Locomoção")
+        inputs['transporte_habitual'] = st.selectbox(
+            "Transporte habitual?", 
+            ['Automóvel', 'Motocicleta', 'Bicicleta', 'Transporte Público', 'Caminhada']
         )
 
-        # Usamos um formulário para que todos os inputs sejam enviados de uma vez
-        with st.form(key="prediction_form"):
-            
-            # Dicionário para armazenar todos os inputs
-            inputs = {}
-
-            # --- Grupo 1: Perfil do Paciente ---
-            st.subheader("Perfil do Paciente")
-            col1, col2 = st.columns(2) # Usar colunas SÓ para perfil básico
-            with col1:
-                inputs['idade'] = st.number_input("Idade (anos)", min_value=14, max_value=100, value=25)
-            with col2:
-                inputs['genero'] = st.radio("Gênero", ['Feminino', 'Masculino'], horizontal=True)
-
-            # --- Grupo 2: Histórico Familiar ---
-            st.subheader("Histórico Familiar")
-            inputs['historico_familiar'] = st.radio("Histórico familiar de obesidade?", ['Não', 'Sim'], horizontal=True)
-
-            # --- Grupo 3: Modo de Locomoção ---
-            st.subheader("Modo de Locomoção")
-            inputs['transporte_habitual'] = st.selectbox(
-                "Transporte habitual?", 
-                ['Automóvel', 'Motocicleta', 'Bicicleta', 'Transporte Público', 'Caminhada']
-            )
-
-            # --- Grupo 4: Hábitos ---
-            st.subheader("Hábitos Diários")
-            inputs['habito_fumar'] = st.radio("O paciente fuma?", ['Não', 'Sim'], horizontal=True)
-            inputs['monitora_caloria_diaria'] = st.radio("Monitora calorias diárias?", ['Não', 'Sim'], horizontal=True)
-            
-            # (TROCAMOS SLIDER POR SELECTBOX)
-            inputs['numero_refeicoes_principais_dia'] = st.selectbox(
-                "Número de refeições principais/dia (NCP):", 
-                ['1 refeição', '2 refeições', '3 refeições', '4 ou mais']
-            )
-            
-            # (TROCAMOS SLIDER POR SELECTBOX)
-            inputs['consumo_diario_agua'] = st.selectbox(
-                "Consumo Diário de Água (CH2O):",
-                options=['Menos de 1L', 'Entre 1L e 2L', 'Mais de 2L']
-            )
-
-            # --- Grupo 5: Comportamentos ---
-            st.subheader("Comportamentos (Alimentação e Atividade)")
-            
-            # (TROCAMOS SLIDER POR SELECTBOX)
-            inputs['consumo_frequente_vegetais'] = st.selectbox(
-                "Consumo de Vegetais (FCVC):",
-                options=['Raramente (ou nunca)', 'Às vezes', 'Sempre']
-            )
-            
-            # (TROCAMOS SLIDER POR SELECTBOX)
-            inputs['frequencia_semanal_atividade_fisica'] = st.selectbox(
-                "Atividade Física Semanal (FAF):",
-                options=['Sedentário (0 dias)', '1-2 dias', '3-4 dias', '4-5 dias ou mais']
-            )
-            
-            # (TROCAMOS SLIDER POR SELECTBOX)
-            inputs['tempo_uso_dispositivo'] = st.selectbox(
-                "Tempo em dispositivos (TUE):",
-                options=['0-2 horas/dia', '3-5 horas/dia', 'Mais de 5 horas/dia']
-            )
-            
-            inputs['consumo_frequente_alimentos_caloricos'] = st.radio(
-                "Consumo Frequente de Alimentos Calóricos (FAVC)?",
-                ['Não', 'Sim'], index=1, horizontal=True
-            )
-            inputs['consumo_lanches_entre_refeicoes'] = st.selectbox(
-                "Consumo de Lanches entre Refeições (CAEC):",
-                ['Não', 'Às vezes', 'Frequente', 'Sempre'], index=1
-            )
-            inputs['consumo_bebida_alcoolica'] = st.selectbox(
-                "Consumo de Bebida Alcoólica (CALC):",
-                ['Não', 'Às vezes', 'Frequente', 'Sempre'], index=0
-            )
-
-            st.markdown("---")
-            
-            #Botão de Previsão
-            submit_button = st.form_submit_button(label='Analisar Risco', type="primary")
-
-        # --- Lógica de Previsão ---
-        if submit_button:
-            with st.spinner("Analisando perfil e executando modelo..."):
-                
-                #1. Preparar os dados
-                df_predicao = preparar_dados_para_previsao(inputs)
-                
-                #2. Prever (retorna um número, ex: [4])
-                previsao_numerica = modelo_pipeline.predict(df_predicao)
-                
-                #3. Decodificar (retorna o texto, ex: ['Peso Normal'])
-                previsao_texto = label_encoder.inverse_transform(previsao_numerica)
-                
-                time.sleep(1) #Simula o processamento
-
-            #4. Exibir o resultado
-            st.subheader("Resultado da Análise:")
-            resultado = previsao_texto[0] #Pega o texto (ex: 'Sobrepeso')
-            
-            if resultado in ['Obesidade Grau I', 'Obesidade Grau II', 'Obesidade Grau III']:
-                st.error(f"Nível de Risco Estimado: {resultado}")
-                st.markdown(
-                    "**Recomendação:** O modelo indica um risco elevado, "
-                    "classificado em um nível de obesidade. Recomenda-se "
-                    "avaliação clínica detalhada."
-                )
-            elif resultado == 'Sobrepeso':
-                st.warning(f"Nível de Risco Estimado: {resultado}")
-                st.markdown(
-                    "**Recomendação:** O modelo indica que o perfil do paciente o coloca na **faixa de alerta (Sobrepeso)**. "
-                    "Este é o **momento-chave** para intervenção e mudança de hábitos, "
-                    "antes que o risco progrida para um nível de obesidade."
-                )
-            else: #Peso Normal ou Insuficiente
-                st.success(f"Nível de Risco Estimado: {resultado}")
-                st.markdown(
-                    "**Recomendação:** O modelo indica um perfil de peso "
-                    "dentro da faixa normal ou insuficiente."
-                )
-
-    # --- CONTEÚDO DA ABA 2: A JUSTIFICATIVA ---
-    with tab2:
-        st.header("Transparência e Performance do Modelo")
-        st.markdown(
-            "Esta ferramenta é alimentada por um modelo de **Random Forest** treinado na "
-            "**base de dados corrigida (padrão OMS)**, conforme justificado na Visão Analítica. "
-            "As métricas abaixo refletem o desempenho final do modelo no conjunto de teste "
-            "(20% dos dados que ele nunca havia visto)."
+        # --- Grupo 4: Hábitos Diários ---
+        st.subheader("Hábitos Diários")
+        inputs['habito_fumar'] = st.radio("O paciente fuma?", ['Não', 'Sim'], horizontal=True)
+        inputs['monitora_caloria_diaria'] = st.radio("Monitora calorias diárias?", ['Não', 'Sim'], horizontal=True)
+        inputs['numero_refeicoes_principais_dia'] = st.selectbox(
+            "Número de refeições principais/dia (NCP):", 
+            ['1 refeição', '2 refeições', '3 refeições', '4 ou mais']
+        )
+        inputs['consumo_diario_agua'] = st.selectbox(
+            "Consumo Diário de Água (CH2O):",
+            options=['Menos de 1L', 'Entre 1L e 2L', 'Mais de 2L']
         )
 
-        # 1. As Métricas Obrigatórias (Atualizadas para 78.25%)
-        st.subheader("Métricas de Performance (Acurácia de 78.25%)")
-        col1, col2, col3 = st.columns(3)
-        col1.metric("Acurácia Final", "78.25%")
-        col2.metric("F1-Score (Ponderado)", "0.78")
-        col3.metric("F1-Score (Macro Avg)", "0.79")
-        
-        st.info(
-            "**O que isso significa?** A acurácia de 78.25% indica que o modelo acerta "
-            "quase 4 em cada 5 previsões. É uma ferramenta de *apoio* robusta, "
-            "mas não substitui o diagnóstico clínico."
+        # --- Grupo 5: Comportamentos ---
+        st.subheader("Comportamentos (Alimentação e Atividade)")
+        inputs['consumo_frequente_vegetais'] = st.selectbox(
+            "Consumo de Vegetais (FCVC):",
+            options=['Raramente (ou nunca)', 'Às vezes', 'Sempre']
         )
-        
-        # 2. A Matriz de Confusão (Traduzida)
-        st.subheader("Diagnóstico do Modelo: Uma Tradução")
-        st.info(
-            "**1. Onde podemos confiar no modelo (Alta Confiança):**\n"
-            "O modelo é **extremamente confiável** para identificar os casos mais críticos. "
-            "Como o 'Relatório de Classificação'  mostra, quando o modelo prevê "
-            "**Obesidade Grau III**, ele está **correto 90% das vezes** (Precision de 0.90) . "
-            "Isso nos dá alta confiança nos alertas de alto risco."
-            "\n\n"
-            "**2. Onde o modelo tem mais dificuldade (O Ponto de Atenção):**\n"
-            "O principal desafio do modelo é na **fronteira entre 'Peso Normal' e 'Sobrepeso'**. "
-            "A 'Matriz de Confusão'  mostra que, de 60 pacientes de 'Peso Normal', "
-            "o modelo 'confundiu' 11 deles como 'Sobrepeso'. "
-            "Isso é confirmado pelo 'Recall' de 0.68 para 'Peso Normal' ."
-            "\n\n"
-            "**3. Conclusão:**\n"
-            "Use esta ferramenta como um **forte apoio à triagem** para casos graves. "
-            "Tenha atenção redobrada ao avaliar pacientes na fronteira "
-            "entre 'Peso Normal' e 'Sobrepeso', pois é onde as nuances "
-            "comportamentais mais impactam a previsão."
-        )        
-
-        # 3. O Relatório de Classificação (Traduzido)
-        st.subheader("Evidências Visuais do Desempenho")
-        try:
-            st.image(CM_PATH, caption="Matriz de Confusão (Desempenho no Teste Final)")            
-        except FileNotFoundError:
-            st.warning(f"Imagem da Matriz de Confusão não encontrada em {CM_PATH}")
-
-        try:            
-            st.image(REPORT_PATH, caption="Relatório de Classificação (Heatmap)")       
-        except FileNotFoundError:
-            st.warning(f"Imagem do Relatório de Classificação não encontrado em {REPORT_PATH}")
-
-        st.subheader("O que o modelo considera mais importante?")
-        st.markdown(
-            "Finalmente, para confiar em um modelo, precisamos saber *como* ele toma "
-            "as decisões. Este gráfico SHAP mostra quais fatores mais 'pesaram' "
-            "na previsão final."
+        inputs['frequencia_semanal_atividade_fisica'] = st.selectbox(
+            "Atividade Física Semanal (FAF):",
+            options=['Sedentário (0 dias)', '1-2 dias', '3-4 dias', '4-5 dias ou mais']
         )
-        
-        try:
-            SHAP_PATH = os.path.join(REPORTS_DIR, "shap_summary_bar.png")
-            st.image(SHAP_PATH, caption="Importância Global das Features (SHAP)")
-            
-            st.success(
-                "**Conclusão de Confiança:**"
-                "\n\n"
-                "1. **O modelo pensa como um clínico:** O gráfico prova que o modelo "
-                "baseia suas decisões nos fatores de maior impacto clínico: `Idade`, "
-                "`Consumo de Vegetais`, `Gênero` e `Histórico Familiar`."
-                "\n\n"
-                "2. **Os Índices funcionam:** Os índices que criamos (`indice_risco_alimentar` "
-                "e `indice_estilo_vida`) são altamente preditivos e confirmam que o *conjunto* "
-                "de hábitos é mais importante que fatores isolados."
-                "\n\n"
-                "**Diagnóstico Final:** O modelo é confiável. Ele não está 'trapaceando' "
-                "ou usando correlações espúrias. Suas previsões são baseadas em "
-                "fatores que fazem sentido médico."
+        inputs['tempo_uso_dispositivo'] = st.selectbox(
+            "Tempo em dispositivos (TUE):",
+            options=['0-2 horas/dia', '3-5 horas/dia', 'Mais de 5 horas/dia']
+        )
+        inputs['consumo_frequente_alimentos_caloricos'] = st.radio(
+            "Consumo Frequente de Alimentos Calóricos (FAVC)?",
+            ['Não', 'Sim'], index=1, horizontal=True
+        )
+        inputs['consumo_lanches_entre_refeicoes'] = st.selectbox(
+            "Consumo de Lanches entre Refeições (CAEC):",
+            ['Não', 'Às vezes', 'Frequente', 'Sempre'], index=1
+        )
+        inputs['consumo_bebida_alcoolica'] = st.selectbox(
+            "Consumo de Bebida Alcoólica (CALC):",
+            ['Não', 'Às vezes', 'Frequente', 'Sempre'], index=0
+        )
+
+        st.markdown("---")
+        submit_button = st.form_submit_button(label='Analisar Risco', type="primary")
+
+    # -------- CÁLCULO DO IMC SÓ APÓS O CLIQUE --------
+    if submit_button:
+
+        # Calcular IMC
+        imc = inputs['peso'] / (inputs['altura'] ** 2)
+
+        def classificar_imc(imc):
+            if imc < 18.5:
+                return "Abaixo do Peso"
+            elif imc < 25:
+                return "Peso Normal"
+            elif imc < 30:
+                return "Sobrepeso"
+            elif imc < 35:
+                return "Obesidade Grau I"
+            elif imc < 40:
+                return "Obesidade Grau II"
+            else:
+                return "Obesidade Grau III"
+                
+        classificacao_oms = classificar_imc(imc)
+
+        with st.spinner("Analisando perfil e executando modelo..."):
+            df_predicao = preparar_dados_para_previsao(inputs)
+            previsao_numerica = modelo_pipeline.predict(df_predicao)
+            previsao_texto = label_encoder.inverse_transform(previsao_numerica)
+            time.sleep(1)
+
+        # ----- EXIBIR IMC -----
+        st.subheader("Informações Antropométricas")
+        st.write(f"**Peso informado:** {inputs['peso']} kg")
+        st.write(f"**Altura informada:** {inputs['altura']} m")
+        st.write(f"**IMC calculado:** {imc:.1f}")
+        st.write(f"**Classificação OMS:** {classificacao_oms}")
+
+        # ----- RESULTADO -----
+        resultado = previsao_texto[0]
+
+        st.subheader("Resultado da Análise:")
+
+        if resultado in ['Obesidade Grau I', 'Obesidade Grau II', 'Obesidade Grau III']:
+            st.error("⚠ Risco Elevado")
+            st.markdown(
+                "**Recomendação:** O conjunto de hábitos informados indica um alto risco "
+                "de evolução ou manutenção de quadros relacionados à obesidade. "
+                "É recomendada uma avaliação clínica profissional e ações imediatas."
             )
-        except FileNotFoundError:
-            st.warning("Gráfico SHAP não encontrado. Execute generate_shap.py primeiro.")
+
+        elif resultado == 'Sobrepeso':
+            st.warning("⚠ Risco Moderado")
+            st.markdown(
+                "**Recomendação:** Os hábitos informados sugerem que o paciente está em "
+                "uma zona de atenção. Pequenas mudanças de estilo de vida podem reduzir "
+                "significativamente o risco de progressão."
+            )
+
+        else:
+            st.info("ℹ Risco Baixo")
+            st.markdown(
+                "**Recomendação:** O modelo indica baixo risco com base nos hábitos "
+                "informados, mas reforça-se a importância de manter rotinas saudáveis "
+                "para prevenção futura."
+            )

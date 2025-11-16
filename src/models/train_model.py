@@ -60,9 +60,9 @@ print(f"LabelEncoder (mapa de tradução) salvo em: {le_path}")
 #Definição das colunas que "vazam" a resposta
 features_de_leakage = [
     'classe_peso_corporal', #Alvo original falho
-    'IMC',                  #Vazamento direto
-    'peso_kg',              #Vazamento direto
-    'altura_m',              #Vazamento direto
+    'IMC',
+    'peso_kg',
+    'altura_m',
     'risco_alimentos_caloricos_num',
     'risco_lanches_num',
     'risco_alcool_num',
@@ -74,7 +74,6 @@ X = df.drop(columns=[TARGET] + features_de_leakage)
 
 print(f"Alvo (y) definido como: {TARGET}")
 print(f"Features de treinamento (X): {list(X.columns)}")
-
 
 # --- Bloco 3: Divisão Treino/Teste ---
 X_train, X_test, y_train, y_test = train_test_split(

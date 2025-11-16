@@ -1,26 +1,32 @@
 import streamlit as st
-from modulo import storytelling, sistema_preditivo  #1. Importe os módulos
+from modulo import storytelling, sistema_preditivo, performance_modelo 
 
-#Configuração da página (opcional, mas recomendado)
+# --- Configuração da Página ---
 st.set_page_config(
     page_title="Predição de Obesidade",
-    page_icon="📊",
+    page_icon="🩺",
     layout="wide"
 )
 
-# --- BARRA LATERAL (SIDEBAR) ---
+# --- BARRA LATERAL ---
 st.sidebar.title("Navegação")
 st.sidebar.markdown("Selecione a Seção:")
 
 selecao = st.sidebar.radio(
-    "Selecione a Seção:",  #O st.radio precisa de um label
-    options=["Sistema Preditivo", "Visão Analítica"],
-    label_visibility="collapsed" #Esconde o label para ficar mais limpo
+    "Selecione a Seção:",
+    options=[
+        "Sistema Preditivo", 
+        "Interpretação (Performance do Modelo)",
+        "Visão Analítica (Data Storytelling)"
+    ],
+    label_visibility="collapsed"
 )
 
-# --- ROTEAMENTO (Decidindo qual página mostrar) ---
+# --- ROTEAMENTO ---
 if selecao == "Sistema Preditivo":
-    sistema_preditivo.run() #2. Chame a função run() do sistema
-
-elif selecao == "Visão Analítica":
-    storytelling.run()  #2. Chame a função run() do storytelling
+    sistema_preditivo.run()
+    
+elif selecao == "Interpretação (Performance do Modelo)":
+    performance_modelo.run()
+elif selecao == "Visão Analítica (Data Storytelling)":
+    storytelling.run()
