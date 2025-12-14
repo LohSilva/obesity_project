@@ -20,7 +20,7 @@ O dashboard é apresentado o:
 
 - **Sistema Preditivo:** A ferramenta interativa para o médico inserir dados do paciente e receber a previsão de risco.
 
-## 💡 **2. A Solução: Duas Ferramentas em Uma**
+## 💡 **2. A Solução: Sistema Preditivo de Apoio à Decisão**
 
 Para atender ao desafio, foi construída uma solução preditiva focada no apoio à decisão clínica:
 
