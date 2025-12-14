@@ -182,6 +182,9 @@ else:
 # --- Bloco 8: Salvar Artefatos Finais ---
 print(f"--- [8/9] Salvando artefatos... ---")
 
+plt.style.use('dark_background')
+cor_fundo = '#0E1117'
+
 #1. Salvando a Matriz de Confusão
 print("Salvando gráfico da Matriz de Confusão...")
 cm = confusion_matrix(y_test, y_pred_final)
@@ -196,17 +199,25 @@ except FileNotFoundError:
     print("Aviso: label_encoder.joblib não encontrado. Usando números nas classes.")
     nomes_classes = modelo_vencedor_pipeline.classes_
 
-plt.figure(figsize=(12, 8))
+fig, ax = plt.subplots(figsize=(12, 8))
+fig.patch.set_facecolor(cor_fundo)
+ax.set_facecolor(cor_fundo)
+
 sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', 
             xticklabels=nomes_classes, 
-            yticklabels=nomes_classes)
-plt.title('Matriz de Confusão - Desempenho no Teste Final')
-plt.ylabel('Classe Verdadeira')
-plt.xlabel('Classe Prevista')
+            yticklabels=nomes_classes,
+            linewidths=0.5, linecolor=cor_fundo)
+
+plt.title('Matriz de Confusão - Desempenho no Teste Final', color='white', fontsize=14)
+plt.ylabel('Classe Verdadeira', color='white')
+plt.xlabel('Classe Prevista', color='white')
+plt.xticks(color='white')
+plt.yticks(color='white')
 plt.tight_layout() #Ajusta o layout para não cortar os nomes
 
 cm_path = os.path.join(REPORTS_DIR, 'matriz_confusao_final.png')
-plt.savefig(cm_path)
+plt.savefig(cm_path, dpi=300, facecolor=fig.get_facecolor())
+plt.close()
 print(f"Matriz de Confusão salva em: {cm_path}")
 
 #2. Salvar o Modelo (Pipeline Completo)
@@ -216,6 +227,7 @@ print(f"Modelo (pipeline completo) salvo em: {modelo_final_path}")
 
 print("--- Script de treinamento finalizado com sucesso! ---")
 print()
+
 # --- Bloco 9: Salvar o Relatório de Classificação como Imagem ---
 print("--- [9/9] Salvando Relatório de Classificação como imagem... ---")
 
@@ -235,22 +247,31 @@ report_df_plot = report_df.drop(['accuracy']) #Remove a linha de acurácia total
 report_df_plot = report_df_plot.drop(columns=['support']) #Remove a coluna de contagem
 
 #4. Criar o Heatmap
-plt.figure(figsize=(12, 8))
+fig, ax = plt.subplots(figsize=(12, 8))
+fig.patch.set_facecolor(cor_fundo)
+ax.set_facecolor(cor_fundo)
+
 sns.heatmap(
     report_df_plot, 
     annot=True,     #Escreve os números (ex: 0.77)
     fmt='.2f',      #Formata com 2 casas decimais
     cmap='Blues',   #Mesma paleta da Matriz de Confusão
-    cbar=False      #Opcional: remove a barra de cor lateral
+    cbar=False,     #Opcional: remove a barra de cor latera
+    linewidths=0.5,
+    linecolor=cor_fundo
 )
-plt.title('Relatório de Classificação Final (Heatmap)')
-plt.xlabel('Métricas')
-plt.ylabel('Classes')
+
+plt.title('Relatório de Classificação Final (Heatmap)', color='white', fontsize=14)
+plt.xlabel('Métricas', color='white')
+plt.ylabel('Classes', color='white')
+plt.xticks(color='white')
+plt.yticks(color='white', rotation=0)
 plt.tight_layout()
 
 #5. Salvar a imagem
 report_img_path = os.path.join(REPORTS_DIR, 'classification_report_final.png')
-plt.savefig(report_img_path)
+plt.savefig(report_img_path, dpi=300, facecolor=fig.get_facecolor())
+plt.close()#Fecha para limpar memória
 
 print(f"Relatório de Classificação salvo em: {report_img_path}")
 print("--- Script de treinamento finalizado com sucesso! ---")

@@ -160,7 +160,7 @@ def run():
 
         col_peso, col_altura = st.columns(2)
         with col_peso:
-            inputs['peso'] = st.number_input("Peso (kg)", min_value=30.0, max_value=300.0, value=70.0)
+            inputs['peso'] = st.number_input("Peso (kg)", min_value=00.00, max_value=300.0, value=60.00, format="%.2f")
 
         with col_altura:
             inputs['altura'] = st.number_input("Altura (m)", min_value=1.20, max_value=2.20, value=1.70)
@@ -169,7 +169,7 @@ def run():
         st.subheader("Perfil do Paciente")
         col1, col2 = st.columns(2)
         with col1:
-            inputs['idade'] = st.number_input("Idade (anos)", min_value=14, max_value=100, value=25)
+            inputs['idade'] = st.number_input("Idade (anos)", min_value=0, max_value=120, value=25)
         with col2:
             inputs['genero'] = st.radio("Gênero do Paciente", ['Feminino', 'Masculino'], horizontal=True)
 
@@ -228,23 +228,7 @@ def run():
         submit_button = st.form_submit_button(label='Analisar Risco', type="primary")
 
         #Calcular IMC apenas para exibição
-        imc = inputs['peso'] / (inputs['altura'] ** 2)
-
-        def classificar_imc(imc):
-            if imc < 18.5:
-                return "Abaixo do Peso"
-            elif imc < 25:
-                return "Peso Normal"
-            elif imc < 30:
-                return "Sobrepeso"
-            elif imc < 35:
-                return "Obesidade Grau I"
-            elif imc < 40:
-                return "Obesidade Grau II"
-            else:
-                return "Obesidade Grau III"
-                
-        classificacao_oms = classificar_imc(imc)
+        imc = inputs['peso'] / (inputs['altura'] ** 2)        
 
     # -------- LÓGICA DE PREVISÃO --------
     if submit_button:  
@@ -258,8 +242,7 @@ def run():
         st.subheader("Informações Antropométricas")
         st.write(f"**Peso informado:** {inputs['peso']} kg")
         st.write(f"**Altura informada:** {inputs['altura']} m")
-        st.write(f"**IMC calculado:** {imc:.1f}")
-        st.write(f"**Classificação OMS:** {classificacao_oms}")
+        st.write(f"**IMC calculado:** {imc:.1f}")       
 
         #Mensagem automática se IMC >= 25
         if imc >= 25:

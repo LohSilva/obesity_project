@@ -1,6 +1,5 @@
 import streamlit as st
-from modulo import storytelling, sistema_preditivo, performance_modelo 
-
+from modulo import sistema_preditivo
 # --- Configuração da Página ---
 st.set_page_config(
     page_title="Predição de Obesidade",
@@ -14,11 +13,7 @@ st.sidebar.markdown("Selecione a Seção:")
 
 selecao = st.sidebar.radio(
     "Selecione a Seção:",
-    options=[
-        "Sistema Preditivo", 
-        "Interpretação (Performance do Modelo)",
-        "Visão Analítica (Data Storytelling)"
-    ],
+    options=["Sistema Preditivo"],
     label_visibility="collapsed"
 )
 
@@ -26,7 +21,3 @@ selecao = st.sidebar.radio(
 if selecao == "Sistema Preditivo":
     sistema_preditivo.run()
     
-elif selecao == "Interpretação (Performance do Modelo)":
-    performance_modelo.run()
-elif selecao == "Visão Analítica (Data Storytelling)":
-    storytelling.run()
