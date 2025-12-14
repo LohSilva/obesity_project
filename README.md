@@ -16,23 +16,20 @@ A aplicação interativa está hospedada no Streamlit Community Cloud e pode ser
 
 Link: https://projeto-obesidade.streamlit.app//
 
-O dashboard é dividido em duas seções:
-
-- **Visão Analítica:** O storytelling completo que documenta a investigação do data leakage e a análise dos fatores de risco.
+O dashboard é apresentado o:
 
 - **Sistema Preditivo:** A ferramenta interativa para o médico inserir dados do paciente e receber a previsão de risco.
 
 ## 💡 **2. A Solução: Duas Ferramentas em Uma**
 
-Para atender ao desafio, foram construídas duas soluções integradas:
+Para atender ao desafio, foi construída uma solução preditiva focada no apoio à decisão clínica:
 
-**Visão Analítica (O "Porquê"):** Um storytelling de dados que prova a falha no dataset original (o leakage) e valida a criação de uma nova variável-alvo (classe_peso_oms) baseada nos padrões da OMS.
+**Sistema Preditivo:**
+- Interface interativa desenvolvida em Streamlit para inserção dos dados do paciente.
+- Geração de previsão do nível de risco associado à obesidade, com base em hábitos e comportamento.
+- Apresentação de informações antropométricas (IMC e classificação OMS) apenas como apoio contextual, não como variável de decisão do modelo.
 
-**Sistema Preditivo (O "O Quê"):**
-
-- Ferramenta (Aba 1): Uma interface limpa para o médico inserir os dados do paciente e receber uma previsão.
-
-- Interpretação (Aba 2): Uma "tradução para o médico" da performance do modelo, usando a Matriz de Confusão e gráficos SHAP para provar que o modelo é confiável e "pensa" de forma clínica.
+O processo analítico e o storytelling de dados que fundamentaram as decisões técnicas (modelagem, correção da variável-alvo e validações) são apresentados no material executivo (PPT), destinado à banca avaliadora.
 
 ## 🛠️**3. Arquitetura e Metodologia**
 
