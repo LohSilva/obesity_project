@@ -1,87 +1,37 @@
-## 🏥**Projeto de Previsão de Nível de Obesidade**
+# Projeto de Previsão de Nível de Obesidade - Tech Challenge FIAP
 
-Este projeto desenvolve um pipeline completo de Data Analytics e Machine Learning para prever o nível de obesidade de um indivíduo com base em hábitos alimentares, físicos e dados demográficos. A solução final é um dashboard interativo em Streamlit projetado para auxiliar equipes médicas na rápida identificação de perfis de risco.
+Este projeto consiste em um pipeline de Data Science para prever o nível de obesidade com base em hábitos de vida e dados demográficos. O foco principal foi a correção de um viés crítico (data leakage) identificado no dataset original, resultando em um modelo validado com acurácia de 78.25% seguindo os critérios da OMS.
 
-### 🌟**Destaque do Projeto: A Investigação do "Data Leakage"**
+## 🚀 Como Executar o Projeto (Reprodutibilidade)
 
-Mais do que apenas treinar um modelo, o núcleo deste projeto foi uma investigação analítica que descobriu uma falha crítica no dataset original.
+Existem duas formas de rodar a aplicação localmente. A via Docker é a recomendada por garantir que o ambiente seja idêntico ao de desenvolvimento.
 
-Nossa análise provou que esses resultados eram falsamente inflados devido a um vazamento de dados (data leakage), onde a variável-alvo original (classe_peso_corporal) era criada usando regras de IMC diferentes para cada gênero.
+### Opção 1: Via Docker (Recomendado)
+Certifique-se de ter o Docker instalado e executando.
+1. **Construir a imagem:** `docker build -t obesity_project .`
+2. **Executar o container:** `docker run -p 8501:8501 obesity_project`
+3. **Acessar:** `http://localhost:8501`
 
-Este projeto documenta a descoberta, a prova e a correção dessa falha, culminando em um modelo robusto, com acurácia honesta de **78.25%**, treinado em um alvo cientificamente válido (classe_peso_oms) e pronto para uso clínico.
+### Opção 2: Via Python Local
+1. Instale as dependências: `pip install -r requirements.txt`
+2. Inicie o dashboard: `streamlit run src/app/app.py`
 
-## 🚀**1. Acesse a Aplicação (Deploy)**
+---
 
-A aplicação interativa está hospedada no Streamlit Community Cloud e pode ser acessada publicamente.
+## 🏗️ Arquitetura e Metodologia
 
-Link: https://projeto-obesidade.streamlit.app//
+* **Arquitetura Medalhão:** Organização dos dados em camadas Bronze (Raw), Silver (Processed) e Gold (Final/Model).
+* **Engenharia de Features:** Criação de índices comportamentais (estilo de vida e risco alimentar) para aumentar o poder preditivo.
+* **Modelagem:** Comparação entre Random Forest e XGBoost com validação cruzada K-Fold. O modelo final foi serializado em `.joblib`.
+* **Containerização:** Uso de Docker para isolamento de dependências e portabilidade total do pipeline.
 
-O dashboard é apresentado o:
-
-- **Sistema Preditivo:** A ferramenta interativa para o médico inserir dados do paciente e receber a previsão de risco.
-
-## 💡 **2. A Solução: Sistema Preditivo de Apoio à Decisão**
-
-Para atender ao desafio, foi construída uma solução preditiva focada no apoio à decisão clínica:
-
-**Sistema Preditivo:**
-- Interface interativa desenvolvida em Streamlit para inserção dos dados do paciente.
-- Geração de previsão do nível de risco associado à obesidade, com base em hábitos e comportamento.
-- Apresentação de informações antropométricas (IMC e classificação OMS) apenas como apoio contextual, não como variável de decisão do modelo.
-
-O processo analítico e o storytelling de dados que fundamentaram as decisões técnicas (modelagem, correção da variável-alvo e validações) são apresentados no material executivo (PPT), destinado à banca avaliadora.
-
-## 🛠️**3. Arquitetura e Metodologia**
-
-O projeto segue padrões profissionais de Engenharia de Dados para garantir qualidade e reprodutibilidade.
-
-**Arquitetura Medalhão:** Os dados foram processados seguindo as camadas Bronze (ingestão), Silver (limpeza e engenharia de features) e Gold (camada final, pronta para modelagem).
-
-**Engenharia de Features:** O insight mais importante foi obtido através da criação de features de engenharia, como indice_estilo_vida e indice_risco_alimentar, que se provaram preditores mais fortes do que os dados brutos.
-
-**Pipeline de Modelagem (src/models/):** O treinamento foi feito de forma robusta, usando Pipelines do Scikit-learn para pré-processamento, LabelEncoder para o alvo, e Validação Cruzada (K-Fold) para comparar Random Forest e XGBoost.
-
-**Interpretabilidade (XAI):** O modelo final foi validado com SHAP para garantir que suas decisões são baseadas em fatores clinicamente relevantes.
-
-## 📘**4. Documentação Completa**
+## 📘 Documentação Completa
 
 Toda a jornada, desde a arquitetura de dados, a prova do data leakage e a análise de performance do modelo (Acurácia, F1-Score, Matriz de Confusão e SHAP) estão documentados no relatório técnico.
 
 📄**Acesse aqui:** [Relatório Técnico (PDF)](docs/relatorio_tecnico/relatorio_tecnico.pdf)
 
-## 🚀**5. Como Executar o Dashboard Localmente**
 
-Este repositório está configurado para o deploy (lendo o CSV e o modelo .joblib). Não é necessário rodar os scripts de treinamento para executar o app.
-
-1. Clone o repositório:
-
-git clone [https://github.com/seu-usuario/obesity_project.git](https://github.com/seu-usuario/obesity_project.git)
-
-cd obesity_project
-
-2. Crie o ambiente virtual e instale as dependências:
-
-python -m venv .venv
-
-.\.venv\Scripts\activate 
-
-pip install -r requirements.txt
-
-3. Inicie o Dashboard Streamlit:
-
-streamlit run src/app/app.py
-
-### Como Recriar o Modelo (Avançado)
-
-Se você deseja rodar o pipeline de treinamento do zero:
-
-- Treinar o Modelo:
-
-    python src/models/train_model.py
-
-- Gerar os Gráficos SHAP:
-
-python src/models/generate_shap.py
 
 ## 👩‍💻 Equipe de Desenvolvimento
 
